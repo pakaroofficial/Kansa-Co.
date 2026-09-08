@@ -14,6 +14,7 @@ export default function CategoryForm({
   submitLabel: string;
   defaultValues?: {
     name?: string;
+    description?: string | null;
     image_url?: string | null;
     sort_order?: number | null;
   };
@@ -64,6 +65,22 @@ export default function CategoryForm({
           defaultValue={defaultValues?.name}
           className="w-full border hairline rounded-[3px] px-4 py-2.5 focus:outline-none focus:border-brass"
         />
+      </div>
+
+      <div>
+        <label htmlFor="description" className="block text-sm text-ink/70 mb-1.5">
+          Description
+        </label>
+        <textarea
+          id="description"
+          name="description"
+          rows={2}
+          defaultValue={defaultValues?.description || ""}
+          className="w-full border hairline rounded-[3px] px-4 py-2.5 focus:outline-none focus:border-brass"
+        />
+        <p className="text-xs text-ink/40 mt-1">
+          Shown under the category name on the website. Optional.
+        </p>
       </div>
 
       <div>

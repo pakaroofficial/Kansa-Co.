@@ -6,6 +6,10 @@
 --
 -- Not run automatically. Run manually in Supabase Dashboard -> SQL Editor
 -- when ready.
+--
+-- The categories table didn't have a description column yet (the public
+-- site code assumed it did) -- add it first, preserving existing rows.
+alter table categories add column if not exists description text;
 
 insert into categories (website_id, name, slug, description, image_url, sort_order)
 select '765407d6-b4f5-4a94-bbb4-f3e6718d0fe8', v.name, v.slug, v.description, v.image_url, v.sort_order

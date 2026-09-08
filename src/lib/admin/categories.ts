@@ -17,6 +17,7 @@ function slugify(name: string) {
 function readCategoryFields(formData: FormData) {
   return {
     name: String(formData.get("name") || "").trim(),
+    description: String(formData.get("description") || "").trim() || null,
     image_url: String(formData.get("image_url") || "").trim() || null,
     sort_order: Number(formData.get("sort_order") || 0) || 0,
   };
@@ -34,6 +35,7 @@ export async function createCategory(
     website_id: WEBSITE_ID,
     name: fields.name,
     slug: slugify(fields.name),
+    description: fields.description,
     image_url: fields.image_url,
     sort_order: fields.sort_order,
   });
@@ -61,6 +63,7 @@ export async function updateCategory(
     .update({
       name: fields.name,
       slug: slugify(fields.name),
+      description: fields.description,
       image_url: fields.image_url,
       sort_order: fields.sort_order,
     })

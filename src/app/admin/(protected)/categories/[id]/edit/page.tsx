@@ -14,7 +14,7 @@ export default async function EditCategoryPage({
 
   const { data: category } = await supabase
     .from("categories")
-    .select("id, name, image_url, sort_order")
+    .select("id, name, description, image_url, sort_order")
     .eq("id", id)
     .eq("website_id", WEBSITE_ID)
     .maybeSingle();
@@ -31,6 +31,7 @@ export default async function EditCategoryPage({
         submitLabel="Save changes"
         defaultValues={{
           name: category.name,
+          description: category.description,
           image_url: category.image_url,
           sort_order: category.sort_order,
         }}
