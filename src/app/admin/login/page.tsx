@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
@@ -64,6 +65,12 @@ export default function LoginPage() {
           className="w-full border hairline rounded-[3px] px-4 py-2.5 mb-2 focus:outline-none focus:border-brass"
         />
 
+        <div className="flex justify-end mb-2">
+          <Link href="/admin/forgot-password" className="text-xs text-ink/50 hover:text-brass">
+            Forgot password?
+          </Link>
+        </div>
+
         {error && <p className="text-sm text-red-700 mt-2">{error}</p>}
 
         <button
@@ -73,6 +80,13 @@ export default function LoginPage() {
         >
           {loading ? "Signing in…" : "Sign in"}
         </button>
+
+        <p className="mt-6 text-center text-sm text-ink/50">
+          New here?{" "}
+          <Link href="/admin/signup" className="text-brass hover:underline">
+            Activate your account
+          </Link>
+        </p>
       </form>
     </main>
   );
