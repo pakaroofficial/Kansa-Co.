@@ -1,4 +1,4 @@
-import { categories, products } from "@/lib/data";
+import { getCategories, getProducts, getProductsByCategory } from "@/lib/public/products";
 import ProductCard from "@/components/ProductCard";
 import Reveal from "@/components/Reveal";
 import Link from "next/link";
@@ -13,10 +13,11 @@ export default async function ProductsPage({
   searchParams: Promise<{ category?: string }>;
 }) {
   const { category } = await searchParams;
+  const categories = await getCategories();
   const activeCategory = categories.find((c) => c.slug === category);
   const visibleProducts = activeCategory
-    ? products.filter((p) => p.category_id === activeCategory.id)
-    : products;
+    ? await getProductsByCategory(activeCategory.id)
+    : await getProducts();
 
   return (
     <main className="mx-auto max-w-6xl px-6 md:px-10 py-16">
@@ -33,31 +34,33 @@ export default async function ProductsPage({
           </p>
         </div>
 
-        <div className="mt-10 flex flex-wrap gap-3">
-          <Link
-            href="/products"
-            className={`text-sm rounded-[3px] px-4 py-2 border hairline transition-colors ${
-              !activeCategory
-                ? "bg-ink text-ivory border-ink"
-                : "text-ink/70 hover:border-brass"
-            }`}
-          >
-            All
-          </Link>
-          {categories.map((cat) => (
+        {categories.length > 0 && (
+          <div className="mt-10 flex flex-wrap gap-3">
             <Link
-              key={cat.id}
-              href={`/products?category=${cat.slug}`}
+              href="/products"
               className={`text-sm rounded-[3px] px-4 py-2 border hairline transition-colors ${
-                activeCategory?.id === cat.id
+                !activeCategory
                   ? "bg-ink text-ivory border-ink"
                   : "text-ink/70 hover:border-brass"
               }`}
             >
-              {cat.name}
+              All
             </Link>
-          ))}
-        </div>
+            {categories.map((cat) => (
+              <Link
+                key={cat.id}
+                href={`/products?category=${cat.slug}`}
+                className={`text-sm rounded-[3px] px-4 py-2 border hairline transition-colors ${
+                  activeCategory?.id === cat.id
+                    ? "bg-ink text-ivory border-ink"
+                    : "text-ink/70 hover:border-brass"
+                }`}
+              >
+                {cat.name}
+              </Link>
+            ))}
+          </div>
+        )}
       </Reveal>
 
       {visibleProducts.length === 0 ? (

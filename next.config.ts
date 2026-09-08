@@ -21,3 +21,8 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+// Lets the regular `next dev` server use Cloudflare bindings (R2, etc.)
+// locally, matching how the app behaves once deployed to Workers.
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+initOpenNextCloudflareForDev();

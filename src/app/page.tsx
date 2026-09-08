@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { categories, products } from "@/lib/data";
+import { getCategories, getFeaturedProducts } from "@/lib/public/products";
 import { business } from "@/lib/business";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 import ProductCard from "@/components/ProductCard";
@@ -10,8 +10,11 @@ import WhoWeServe from "@/components/WhoWeServe";
 import Reveal from "@/components/Reveal";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
 
-export default function Home() {
-  const featured = products.slice(0, 3);
+export default async function Home() {
+  const [categories, featured] = await Promise.all([
+    getCategories(),
+    getFeaturedProducts(3),
+  ]);
 
   return (
     <main>
@@ -78,47 +81,51 @@ export default function Home() {
       <WhyChooseUs />
 
       {/* Categories */}
-      <section className="mx-auto max-w-6xl px-6 md:px-10 py-20">
-        <Reveal>
-          <div className="flex items-end justify-between mb-10">
-            <h2 className="font-display text-3xl text-ink">
-              Shop by room
-            </h2>
-            <Link href="/products" className="text-sm text-ink/60 hover:text-ink">
-              View all
-            </Link>
-          </div>
-        </Reveal>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-stretch">
-          {categories.map((cat, i) => (
-            <Reveal key={cat.id} delay={i * 100} className="h-full">
-              <Link
-                href={`/products?category=${cat.slug}`}
-                className="group h-full flex flex-col glass overflow-hidden rounded-[6px] hover:bg-white hover:border-brass hover:shadow-[0_16px_36px_-16px_rgba(185,138,46,0.4)] hover:-translate-y-1 transition-all duration-300"
-              >
-                <div className="relative aspect-[3/2] overflow-hidden">
-                  <Image
-                    src={cat.image_url}
-                    alt={cat.name}
-                    fill
-                    sizes="(min-width: 640px) 33vw, 100vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <div className="p-7 flex flex-col flex-1">
-                  <h3 className="font-display text-xl text-ink">{cat.name}</h3>
-                  <p className="mt-2 text-sm text-ink/60 leading-relaxed flex-1">
-                    {cat.description}
-                  </p>
-                  <span className="mt-5 inline-block text-sm text-brass group-hover:translate-x-1 transition-transform">
-                    Browse →
-                  </span>
-                </div>
+      {categories.length > 0 && (
+        <section className="mx-auto max-w-6xl px-6 md:px-10 py-20">
+          <Reveal>
+            <div className="flex items-end justify-between mb-10">
+              <h2 className="font-display text-3xl text-ink">
+                Shop by room
+              </h2>
+              <Link href="/products" className="text-sm text-ink/60 hover:text-ink">
+                View all
               </Link>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+            </div>
+          </Reveal>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-stretch">
+            {categories.map((cat, i) => (
+              <Reveal key={cat.id} delay={i * 100} className="h-full">
+                <Link
+                  href={`/products?category=${cat.slug}`}
+                  className="group h-full flex flex-col glass overflow-hidden rounded-[6px] hover:bg-white hover:border-brass hover:shadow-[0_16px_36px_-16px_rgba(185,138,46,0.4)] hover:-translate-y-1 transition-all duration-300"
+                >
+                  <div className="relative aspect-[3/2] overflow-hidden bg-bark">
+                    {cat.image_url && (
+                      <Image
+                        src={cat.image_url}
+                        alt={cat.name}
+                        fill
+                        sizes="(min-width: 640px) 33vw, 100vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    )}
+                  </div>
+                  <div className="p-7 flex flex-col flex-1">
+                    <h3 className="font-display text-xl text-ink">{cat.name}</h3>
+                    <p className="mt-2 text-sm text-ink/60 leading-relaxed flex-1">
+                      {cat.description}
+                    </p>
+                    <span className="mt-5 inline-block text-sm text-brass group-hover:translate-x-1 transition-transform">
+                      Browse →
+                    </span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Story */}
       <section className="bg-bark text-ivory brass-texture">
@@ -156,25 +163,27 @@ export default function Home() {
       </section>
 
       {/* Featured products */}
-      <section className="mx-auto max-w-6xl px-6 md:px-10 py-20">
-        <Reveal>
-          <div className="flex items-end justify-between mb-10">
-            <h2 className="font-display text-3xl text-ink">
-              Featured pieces
-            </h2>
-            <Link href="/products" className="text-sm text-ink/60 hover:text-ink">
-              View all
-            </Link>
+      {featured.length > 0 && (
+        <section className="mx-auto max-w-6xl px-6 md:px-10 py-20">
+          <Reveal>
+            <div className="flex items-end justify-between mb-10">
+              <h2 className="font-display text-3xl text-ink">
+                Featured pieces
+              </h2>
+              <Link href="/products" className="text-sm text-ink/60 hover:text-ink">
+                View all
+              </Link>
+            </div>
+          </Reveal>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {featured.map((product, i) => (
+              <Reveal key={product.id} delay={i * 100}>
+                <ProductCard product={product} index={i} />
+              </Reveal>
+            ))}
           </div>
-        </Reveal>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-          {featured.map((product, i) => (
-            <Reveal key={product.id} delay={i * 100}>
-              <ProductCard product={product} index={i} />
-            </Reveal>
-          ))}
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Who we serve */}
       <WhoWeServe />

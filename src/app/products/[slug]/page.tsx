@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { getProductBySlug, getCategoryById, products } from "@/lib/data";
+import { getProductBySlug, getCategories, getRelatedProducts } from "@/lib/public/products";
 import { formatPrice } from "@/lib/format";
 import { buildProductQuoteLink } from "@/lib/whatsapp";
 import { UrnMotif } from "@/components/BrassMotif";
@@ -9,23 +9,26 @@ import Reveal from "@/components/Reveal";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export async function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
-}
-
+// Rendered on demand from the live database (not pre-built at deploy
+// time), so a product added in the admin panel shows up immediately —
+// no redeploy needed.
 export default async function ProductPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const category = getCategoryById(product.category_id);
-  const related = products
-    .filter((p) => p.category_id === product.category_id && p.id !== product.id)
-    .slice(0, 3);
+  const categories = await getCategories();
+  const category = product.category_id
+    ? categories.find((c) => c.id === product.category_id)
+    : undefined;
+
+  const related = product.category_id
+    ? await getRelatedProducts(product.category_id, product.id, 3)
+    : [];
 
   return (
     <main className="mx-auto max-w-6xl px-6 md:px-10 py-16">
@@ -67,16 +70,18 @@ export default async function ProductPage({
         </Reveal>
 
         <Reveal delay={100}>
-          <p className="text-sm text-brass">{product.finish}</p>
+          {product.finish && <p className="text-sm text-brass">{product.finish}</p>}
           <h1 className="font-display text-3xl md:text-4xl text-ink mt-2">
             {product.name}
           </h1>
           <p className="mt-4 text-xl text-ink/80">
             {formatPrice(product.price)}
           </p>
-          <p className="mt-6 text-ink/70 leading-relaxed max-w-md">
-            {product.long_description}
-          </p>
+          {product.long_description && (
+            <p className="mt-6 text-ink/70 leading-relaxed max-w-md">
+              {product.long_description}
+            </p>
+          )}
 
           <div className="mt-9 flex flex-col sm:flex-row gap-3">
             <a
@@ -97,8 +102,12 @@ export default async function ProductPage({
           </div>
 
           <dl className="mt-10 pt-8 border-t hairline grid grid-cols-2 gap-y-3 text-sm">
-            <dt className="text-ink/50">Finish</dt>
-            <dd className="text-ink/80">{product.finish}</dd>
+            {product.finish && (
+              <>
+                <dt className="text-ink/50">Finish</dt>
+                <dd className="text-ink/80">{product.finish}</dd>
+              </>
+            )}
             <dt className="text-ink/50">Made to order</dt>
             <dd className="text-ink/80">7–10 working days</dd>
             <dt className="text-ink/50">Care</dt>

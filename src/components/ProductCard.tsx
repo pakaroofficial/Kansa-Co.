@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Product } from "@/lib/data";
+import type { PublicProduct } from "@/lib/public/products";
 import { formatPrice } from "@/lib/format";
 import { buildProductQuoteLink } from "@/lib/whatsapp";
 import { UrnMotif, DiyaMotif } from "./BrassMotif";
@@ -10,7 +10,7 @@ export default function ProductCard({
   product,
   index = 0,
 }: {
-  product: Product;
+  product: PublicProduct;
   index?: number;
 }) {
   const Motif = index % 3 === 1 ? DiyaMotif : UrnMotif;
@@ -33,9 +33,11 @@ export default function ProductCard({
               <Motif className="w-2/3 h-2/3 text-brass/70 group-hover:text-brass transition-colors duration-300" />
             </div>
           )}
-          <span className="glass-dark absolute top-3 left-3 text-[11px] tracking-wide text-ivory-dim rounded-[2px] px-2 py-1">
-            {product.finish}
-          </span>
+          {product.finish && (
+            <span className="glass-dark absolute top-3 left-3 text-[11px] tracking-wide text-ivory-dim rounded-[2px] px-2 py-1">
+              {product.finish}
+            </span>
+          )}
         </Link>
 
         <a
