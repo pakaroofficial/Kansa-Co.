@@ -53,8 +53,12 @@ export default async function DashboardPage() {
   return (
     <main className="mx-auto max-w-6xl px-6 md:px-10 py-12">
       <div className="mb-10">
-        <p className="text-sm text-ink/50">{user?.email}</p>
-        <h1 className="font-display text-2xl text-ink">Welcome, {business.name}</h1>
+        <p className="text-3xl md:text-4xl font-semibold tracking-[0.08em] text-brass">
+          VMAKIZY
+        </p>
+        <h1 className="font-display text-2xl text-ink mt-2">
+          Welcome, {business.name}
+        </h1>
       </div>
 
       <div className="grid sm:grid-cols-3 gap-6">
