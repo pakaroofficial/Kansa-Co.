@@ -15,9 +15,13 @@ export default async function ProtectedAdminLayout({
   if (!user) redirect("/admin/login");
 
   return (
-    <div className="min-h-screen bg-ivory">
+    <div className="min-h-screen bg-ivory flex flex-col">
       <AdminNav />
-      {children}
+      <div className="flex-1">{children}</div>
+      <footer className="border-t hairline py-4 text-center text-xs text-ink/40">
+        Powered by{" "}
+        <span className="text-ink/60 font-medium tracking-wide">VMAKIZY</span>
+      </footer>
     </div>
   );
 }

@@ -171,7 +171,7 @@ export default async function Home() {
                 Featured pieces
               </h2>
               <Link href="/products" className="text-sm text-ink/60 hover:text-ink">
-                View all
+                Shop the full collection →
               </Link>
             </div>
           </Reveal>

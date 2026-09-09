@@ -16,7 +16,7 @@ export default async function EditProductPage({
     supabase
       .from("products")
       .select(
-        "id, name, price, category_id, description, long_description, finish, image_url, is_active, is_featured"
+        "id, name, price, category_id, description, long_description, finish, details, image_url, is_active, is_featured"
       )
       .eq("id", id)
       .eq("website_id", WEBSITE_ID)
@@ -46,6 +46,7 @@ export default async function EditProductPage({
           description: product.description,
           long_description: product.long_description,
           finish: product.finish,
+          details: product.details,
           image_url: product.image_url,
           is_active: product.is_active,
           is_featured: product.is_featured,

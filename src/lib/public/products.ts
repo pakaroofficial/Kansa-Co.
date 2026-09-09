@@ -17,13 +17,14 @@ export type PublicProduct = {
   description: string | null;
   long_description: string | null;
   finish: string | null;
+  details: string | null;
   price: number;
   image_url: string | null;
   is_featured: boolean;
 };
 
 const PRODUCT_COLUMNS =
-  "id, category_id, name, slug, description, long_description, finish, price, image_url, is_featured";
+  "id, category_id, name, slug, description, long_description, finish, details, price, image_url, is_featured";
 
 function withNumericPrice(row: Omit<PublicProduct, "price"> & { price: string | number }) {
   return { ...row, price: Number(row.price) };

@@ -29,6 +29,7 @@ function readProductFields(formData: FormData) {
     long_description:
       String(formData.get("long_description") || "").trim() || null,
     finish: String(formData.get("finish") || "").trim() || null,
+    details: String(formData.get("details") || "").trim() || null,
     image_url: String(formData.get("image_url") || "").trim() || null,
     is_active: formData.get("is_active") === "on",
     is_featured: formData.get("is_featured") === "on",
@@ -54,6 +55,7 @@ export async function createProduct(
     description: fields.description,
     long_description: fields.long_description,
     finish: fields.finish,
+    details: fields.details,
     price: fields.price,
     image_url: fields.image_url,
     is_active: fields.is_active,
@@ -90,6 +92,7 @@ export async function updateProduct(
       description: fields.description,
       long_description: fields.long_description,
       finish: fields.finish,
+      details: fields.details,
       price: fields.price,
       image_url: fields.image_url,
       is_active: fields.is_active,

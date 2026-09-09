@@ -23,6 +23,7 @@ export default function ProductForm({
     description?: string | null;
     long_description?: string | null;
     finish?: string | null;
+    details?: string | null;
     image_url?: string | null;
     is_active?: boolean;
     is_featured?: boolean;
@@ -57,7 +58,9 @@ export default function ProductForm({
               className="text-sm"
             />
             {uploading && <p className="text-xs text-ink/50 mt-1">Uploading…</p>}
-            {uploadError && <p className="text-xs text-red-700 mt-1">{uploadError}</p>}
+            {uploadError && (
+              <p className="text-xs text-red-700 mt-1 whitespace-pre-wrap">{uploadError}</p>
+            )}
           </div>
         </div>
       </div>
@@ -124,6 +127,23 @@ export default function ProductForm({
           defaultValue={defaultValues?.finish || ""}
           className="w-full border hairline rounded-[3px] px-4 py-2.5 focus:outline-none focus:border-brass"
         />
+      </div>
+
+      <div>
+        <label htmlFor="details" className="block text-sm text-ink/70 mb-1.5">
+          Additional details (optional)
+        </label>
+        <textarea
+          id="details"
+          name="details"
+          rows={4}
+          placeholder={"One point per line, e.g.\n7–10 working days to make\nHand wash, dry immediately\nWeight: 450g"}
+          defaultValue={defaultValues?.details || ""}
+          className="w-full border hairline rounded-[3px] px-4 py-2.5 focus:outline-none focus:border-brass resize-none"
+        />
+        <p className="text-xs text-ink/40 mt-1">
+          Shown as bullet points on the product's own page. One point per line.
+        </p>
       </div>
 
       <div>

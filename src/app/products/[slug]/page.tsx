@@ -101,18 +101,31 @@ export default async function ProductPage({
             </Link>
           </div>
 
-          <dl className="mt-10 pt-8 border-t hairline grid grid-cols-2 gap-y-3 text-sm">
-            {product.finish && (
-              <>
-                <dt className="text-ink/50">Finish</dt>
-                <dd className="text-ink/80">{product.finish}</dd>
-              </>
-            )}
-            <dt className="text-ink/50">Made to order</dt>
-            <dd className="text-ink/80">7–10 working days</dd>
-            <dt className="text-ink/50">Care</dt>
-            <dd className="text-ink/80">Hand wash, dry immediately</dd>
-          </dl>
+          {product.finish && (
+            <dl className="mt-10 pt-8 border-t hairline grid grid-cols-2 gap-y-3 text-sm">
+              <dt className="text-ink/50">Finish</dt>
+              <dd className="text-ink/80">{product.finish}</dd>
+            </dl>
+          )}
+
+          {product.details && (
+            <ul
+              className={`space-y-2 text-sm text-ink/70 ${
+                product.finish ? "mt-6" : "mt-10 pt-8 border-t hairline"
+              }`}
+            >
+              {product.details
+                .split("\n")
+                .map((line) => line.trim())
+                .filter(Boolean)
+                .map((line, i) => (
+                  <li key={i} className="flex gap-2">
+                    <span className="text-brass">•</span>
+                    <span>{line}</span>
+                  </li>
+                ))}
+            </ul>
+          )}
         </Reveal>
       </div>
 

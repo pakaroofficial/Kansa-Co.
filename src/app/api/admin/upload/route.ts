@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     const url = await uploadToR2(buffer, key, file.type);
     return NextResponse.json({ url });
   } catch (err) {
-    console.error("R2 upload failed:", err);
+    console.error("R2 upload failed:", err instanceof Error ? err.stack : err);
     return NextResponse.json(
       { error: "Unable to upload the image. Please try again." },
       { status: 500 }
