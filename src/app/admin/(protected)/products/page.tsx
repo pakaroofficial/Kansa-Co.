@@ -4,33 +4,55 @@ import { createClient } from "@/lib/supabase/server";
 import { WEBSITE_ID } from "@/lib/constants";
 import { deleteProduct, toggleProductField } from "@/lib/admin/products";
 import { formatPrice } from "@/lib/format";
+import { getPlanLabel, getProductLimit } from "@/lib/plans";
 import DeleteButton from "@/components/admin/DeleteButton";
 
 export default async function ProductsPage() {
   const supabase = await createClient();
 
-  const [{ data: products }, { data: categories }] = await Promise.all([
-    supabase
-      .from("products")
-      .select("id, name, price, image_url, is_active, is_featured, category_id")
-      .eq("website_id", WEBSITE_ID)
-      .order("created_at", { ascending: false }),
-    supabase.from("categories").select("id, name").eq("website_id", WEBSITE_ID),
-  ]);
+  const [{ data: products }, { data: categories }, { data: website }] =
+    await Promise.all([
+      supabase
+        .from("products")
+        .select("id, name, price, image_url, is_active, is_featured, category_id")
+        .eq("website_id", WEBSITE_ID)
+        .order("created_at", { ascending: false }),
+      supabase.from("categories").select("id, name").eq("website_id", WEBSITE_ID),
+      supabase.from("websites").select("plan").eq("id", WEBSITE_ID).maybeSingle(),
+    ]);
 
   const categoryName = new Map((categories || []).map((c) => [c.id, c.name]));
+  const productCount = products?.length ?? 0;
+  const limit = getProductLimit(website?.plan ?? null);
+  const atLimit = productCount >= limit;
 
   return (
     <main className="mx-auto max-w-6xl px-6 md:px-10 py-12">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-2">
         <h1 className="font-display text-2xl text-ink">Products</h1>
-        <Link
-          href="/admin/products/new"
-          className="bg-ink text-ivory px-5 py-2.5 rounded-[3px] text-sm hover:bg-bark transition-colors"
-        >
-          + Add product
-        </Link>
+        {atLimit ? (
+          <p className="text-sm text-brass">
+            {productCount} / {limit} — plan limit reached
+          </p>
+        ) : (
+          <Link
+            href="/admin/products/new"
+            className="bg-ink text-ivory px-5 py-2.5 rounded-[3px] text-sm hover:bg-bark transition-colors"
+          >
+            + Add product
+          </Link>
+        )}
       </div>
+      <p className="text-sm text-ink/40 mb-8">
+        {productCount} of {limit} products used on your{" "}
+        {getPlanLabel(website?.plan ?? null)} plan
+      </p>
+      {atLimit && (
+        <div className="border hairline rounded-[3px] p-4 mb-8 bg-brass/5 text-sm text-ink/70">
+          You&apos;ve reached your plan&apos;s product limit. Contact Vmakizy
+          to upgrade and add more products.
+        </div>
+      )}
 
       {!products || products.length === 0 ? (
         <p className="text-ink/50">No products have been added yet.</p>

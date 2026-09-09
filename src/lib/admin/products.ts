@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { WEBSITE_ID } from "@/lib/constants";
+import { getPlanLabel, getProductLimit } from "@/lib/plans";
 
 export type ActionState = { error: string } | null;
 
@@ -47,6 +48,23 @@ export async function createProduct(
     return { error: "Please enter a valid price (0 or more)." };
 
   const supabase = await createClient();
+
+  const [{ data: website }, { count: productCount }] = await Promise.all([
+    supabase.from("websites").select("plan").eq("id", WEBSITE_ID).maybeSingle(),
+    supabase
+      .from("products")
+      .select("*", { count: "exact", head: true })
+      .eq("website_id", WEBSITE_ID),
+  ]);
+  const limit = getProductLimit(website?.plan ?? null);
+  if ((productCount ?? 0) >= limit) {
+    return {
+      error: `You've reached the ${limit}-product limit on your ${getPlanLabel(
+        website?.plan ?? null
+      )} plan. Contact Vmakizy to upgrade your plan and add more products.`,
+    };
+  }
+
   const { error } = await supabase.from("products").insert({
     website_id: WEBSITE_ID,
     category_id: fields.category_id,
